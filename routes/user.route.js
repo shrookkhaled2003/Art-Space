@@ -1,15 +1,20 @@
 const express = require('express');
 const validateRequest = require('../middleware/user.validator.js');
-const verfiyToken = require('../middleware/verifyToken.js');
+const verifyToken = require('../middleware/verifyToken.js');
 
 const router = express.Router();
+const userController = require('../controllers/user.controller');
 
-const userController = require('../controllers/user.controller')
+// Fetch all users (Admin only)
+router.get('/', verifyToken, userController.getAllUsers);
 
-router.get('/',verfiyToken,userController.getAllUsers)
+// Register a new user
+router.post('/register', validateRequest(["name", "email", "password", "role"]), userController.register);
 
-  router.post('/register', validateRequest(["name", "email", "password"]), userController.register);
+// User login
+router.post('/login', validateRequest(["email", "password"]), userController.login);
 
-  router.post('/login', validateRequest(["email", "password"]), userController.login);
+// Complete artist profile
+router.post('/complete-profile', verifyToken, userController.completeArtistProfile);
 
 module.exports = router;
